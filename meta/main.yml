@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Matthew Green
+  company: New Edge Engineering
+  description: Install and configure postfix
+  min_ansible_version: 1.5
+  license: MIT
+  platforms:
+  - name: Ubuntu
+    versions:
+    - precise
+  categories:
+  - system
+  - mail
+
+dependencies: []
