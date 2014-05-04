@@ -1,0 +1,55 @@
+---
+- name: ensure postfix is at the latest version
+  apt: pkg=postfix state=latest update_cache=yes
+  notify:
+    - restart postfix
+  tags:
+    - postfix
+    - packages
+
+- name: generate postfix main configuration
+  template:
+    dest=/etc/postfix/main.cf
+    src=main.cf.j2
+    owner=root
+    group=root
+    mode=0644
+  notify:
+    - restart postfix
+  tags:
+    - postfix
+    - configuration
+    - environment
+
+- name: generate postfix master configuration
+  template:
+    dest=/etc/postfix/master.cf
+    src=master.cf.j2
+    owner=root
+    group=root
+    mode=0644
+  notify:
+    - restart postfix
+  tags:
+    - postfix
+    - configuration
+
+- name: generate postfix password configuration
+  template:
+    dest=/etc/postfix/sasl_passwd
+    src=sasl_passwd.j2
+    owner=root
+    group=root
+    mode=0644
+  notify:
+    - postmap sasl_passwd
+  tags:
+    - postfix
+    - configuration
+    - environment
+
+- name: enable postfix to start
+  service: name=postfix state=running enabled=true
+  tags:
+    - postfix
+    - service

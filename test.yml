@@ -1,0 +1,6 @@
+- hosts: all
+  vars_files:
+    - 'defaults/main.yml'
+  tasks:
+    - include: 'tasks/main.yml'
+    - shell: "ps aux | grep -v grep | grep postfix -c | if [ `awk '{ print $1}'` == 0 ]; then echo 'npt service is not running'; fi"

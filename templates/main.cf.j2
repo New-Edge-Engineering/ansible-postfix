@@ -1,0 +1,51 @@
+#
+# WARNING: Saltstack generated file for {{ myhostname }}
+#          Any manual changes may get automatically replaced.
+#          Configured as {{ mail_type }}
+#
+
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+smtpd_banner = \$myhostname ESMTP $mail_name
+biff = no
+
+# appending .domain is the MUA's job
+append_dot_mydomain = no
+
+myhostname = {{ myhostname }}
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+myorigin = {{ myorigin }}
+mydestination = {{ myhostname }}, localhost.localdomain, localhost
+
+smtpd_use_tls = {{ smtpd_use_tls }}
+{% if smtpd_use_tls == "yes" %}
+smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+{% endif %}
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+smtp_sasl_auth_enable = {{ smtp_sasl_auth_enable }}
+{% if smtp_sasl_auth_enable == "yes" %}
+smtp_sasl_password_maps = {{ smtp_sasl_password_maps}}
+smtp_sasl_security_options = {{ smtp_sasl_security_options }}
+smtp_use_tls = {{ smtp_use_tls }}
+smtp_tls_CAfile = {{ smtp_tls_cafile }}
+{% endif %}
+{% if domain is defined %}
+mydomain = {{ domain }}
+{% endif %}
+{% if mail_type == "master" %}
+relayhost =
+mynetworks = {{ mail_relay_networks }}
+inet_interfaces = {{ inet_interfaces }}
+{% else %}
+relayhost = {{ relay_host_port }}
+mynetworks = {{ mail_relay_networks }}
+inet_interfaces = loopback-only
+{% endif %}
+{% if use_procmail is defined %}
+mailbox_command = /usr/bin/procmail -a "$EXTENSION"
+{% endif %}
+mailbox_size_limit = 0
+recipient_delimiter = +
