@@ -1,6 +1,9 @@
 ---
 - name: ensure postfix is at the latest version
-  apt: pkg=postfix state=latest update_cache=yes
+  package:
+    pkg: postfix
+    state: latest
+    update_cache: yes
   notify:
     - restart postfix
   tags:
@@ -49,7 +52,10 @@
     - environment
 
 - name: enable postfix to start
-  service: name=postfix state=running enabled=true
+  service:
+    name: postfix
+    state: started
+    enabled: true
   tags:
     - postfix
     - service
