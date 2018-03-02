@@ -39,11 +39,11 @@
 
 - name: generate postfix password configuration
   template:
-    dest=/etc/postfix/sasl_passwd
-    src=sasl_passwd.j2
-    owner=root
-    group=root
-    mode=0644
+    dest: "/etc/postfix/{{ sasl_passwd_name }}"
+    src: sasl_passwd.j2
+    owner: root
+    group: root
+    mode: 0644
   notify:
     - postmap sasl_passwd
   tags:
