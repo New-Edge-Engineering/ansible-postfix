@@ -4,6 +4,3 @@
     name: postfix
     state: restarted
     enabled: true
-
-- name: postmap sasl_passwd
-  shell: postmap "/etc/postfix/{{ sasl_passwd_name }}"

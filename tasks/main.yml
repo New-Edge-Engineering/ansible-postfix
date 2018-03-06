@@ -1,4 +1,14 @@
 ---
+- name: ensure supporting SASL packages are installed
+  yum:
+    name: "{{ item }}"
+    state: latest
+  when: ansible_pkg_mgr == "yum"
+  with_items:
+    - cyrus-sasl
+    - cyrus-sasl-lib
+    - cyrus-sasl-plain
+
 - name: ensure postfix is at the latest version
   package:
     pkg: postfix
@@ -8,7 +18,7 @@
     - restart postfix
   tags:
     - postfix
-    - packages
+    - installation
 
 - name: generate postfix main configuration
   template:
@@ -22,7 +32,6 @@
   tags:
     - postfix
     - configuration
-    - environment
 
 - name: generate postfix master configuration
   template:
@@ -39,17 +48,40 @@
 
 - name: generate postfix password configuration
   template:
-    dest: "/etc/postfix/{{ sasl_passwd_name }}"
+    dest: "/etc/postfix/sasl_passwd"
     src: sasl_passwd.j2
     owner: root
     group: root
-    mode: 0644
+    mode: 0600
+  register: sasl_passwd_postmap
   notify:
-    - postmap sasl_passwd
+    - restart postfix
   tags:
     - postfix
     - configuration
-    - environment
+
+- name: ensure sasl_passwd is postmap
+  shell: postmap /etc/postfix/sasl_passwd
+  when: sasl_passwd_postmap|changed
+  register: sasl_passwd_db
+  notify:
+    - restart postfix
+  tags:
+    - postfix
+    - configuration
+
+- name: ensure sasl_passwd.db as correct permissions
+  file:
+    path: /etc/postfix/sasl_passwd.db
+    owner: root
+    group: root
+    mode: 0600
+  when: sasl_passwd_db|changed
+  notify:
+    - restart postfix
+  tags:
+    - postfix
+    - configuration
 
 - name: enable postfix to start
   service:
@@ -59,3 +91,6 @@
   tags:
     - postfix
     - service
+
+# to test with ssh cli session on server:
+# echo "Test mail from postfix" | mail -s "Local Outbound SMTP Test" matthew@newedgeengineering.com

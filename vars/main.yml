@@ -1,2 +1,2 @@
 ---
-sasl_passwd_name: "{% if ansible_os_family == 'RedHat' %}sasl_passwd.db{% else %}sasl_passwd_name{% endif %}"
+postfix_smtp_tls_cafile_name: "{% if ansible_os_family == 'RedHat' %}ca-bundle.crt{% else %}thawte_Primary_Root_CA.pem{% endif %}"

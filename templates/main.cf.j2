@@ -1,5 +1,5 @@
 #
-# WARNING: Saltstack generated file for {{ myhostname }}
+# WARNING: Ansible generated file for {{ myhostname }}
 #          Any manual changes may get automatically replaced.
 #          Configured as {{ mail_type }}
 #
@@ -27,14 +27,12 @@ smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 smtp_sasl_auth_enable = {{ smtp_sasl_auth_enable }}
 {% if smtp_sasl_auth_enable == "yes" %}
-smtp_sasl_password_maps = {{ smtp_sasl_password_maps}}
+smtp_sasl_password_maps = {{ smtp_sasl_password_maps }}
 smtp_sasl_security_options = {{ smtp_sasl_security_options }}
 smtp_use_tls = {{ smtp_use_tls }}
 smtp_tls_CAfile = {{ smtp_tls_cafile }}
 {% endif %}
-{% if domain is defined %}
-mydomain = {{ domain }}
-{% endif %}
+mydomain = {{ mydomain }}
 {% if mail_type == "master" %}
 relayhost =
 mynetworks = {{ mail_relay_networks }}
