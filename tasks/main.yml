@@ -1,13 +1,12 @@
 ---
 - name: ensure supporting SASL packages are installed
   yum:
-    name: "{{ item }}"
+    name:
+      - cyrus-sasl
+      - cyrus-sasl-lib
+      - cyrus-sasl-plain
     state: latest
   when: ansible_pkg_mgr == "yum"
-  with_items:
-    - cyrus-sasl
-    - cyrus-sasl-lib
-    - cyrus-sasl-plain
 
 - name: ensure postfix is at the latest version
   package:
@@ -22,11 +21,11 @@
 
 - name: generate postfix main configuration
   template:
-    dest=/etc/postfix/main.cf
-    src=main.cf.j2
-    owner=root
-    group=root
-    mode=0644
+    dest: /etc/postfix/main.cf
+    src: main.cf.j2
+    owner: root
+    group: root
+    mode: 0644
   notify:
     - restart postfix
   tags:
@@ -35,11 +34,11 @@
 
 - name: generate postfix master configuration
   template:
-    dest=/etc/postfix/master.cf
-    src=master.cf.j2
-    owner=root
-    group=root
-    mode=0644
+    dest: /etc/postfix/master.cf
+    src: master.cf.j2
+    owner: root
+    group: root
+    mode: 0644
   notify:
     - restart postfix
   tags:
@@ -62,7 +61,7 @@
 
 - name: ensure sasl_passwd is postmap
   shell: postmap /etc/postfix/sasl_passwd
-  when: sasl_passwd_postmap|changed
+  when: sasl_passwd_postmap is changed
   register: sasl_passwd_db
   notify:
     - restart postfix
@@ -76,7 +75,7 @@
     owner: root
     group: root
     mode: 0600
-  when: sasl_passwd_db|changed
+  when: sasl_passwd_db is changed
   notify:
     - restart postfix
   tags:
